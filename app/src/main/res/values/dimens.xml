@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="currency_icon_height">40dp</dimen>
+    <dimen name="currency_icon_width">40dp</dimen>
+
+    <dimen name="margin_default">16dp</dimen>
+    <dimen name="margin_small">21dp</dimen>
+    <dimen name="margin_medium">24dp</dimen>
+
+    <dimen name="text_size_currency">16sp</dimen>
+    <dimen name="text_size_description">14sp</dimen>
+    <dimen name="text_size_input_field">20sp</dimen>
+
+</resources>

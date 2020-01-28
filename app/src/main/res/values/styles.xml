@@ -8,4 +8,19 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="currency_font">
+        <item name="android:textColor">@color/color_text_black</item>
+        <item name="android:textSize">@dimen/text_size_currency</item>
+    </style>
+
+    <style name="currency_description">
+        <item name="android:textColor">@color/color_grey_50</item>
+        <item name="android:textSize">@dimen/text_size_description</item>
+    </style>
+
+    <style name="currency_input">
+        <item name="android:textColor">@color/color_text_black</item>
+        <item name="android:textSize">@dimen/text_size_input_field</item>
+    </style>
+
 </resources>

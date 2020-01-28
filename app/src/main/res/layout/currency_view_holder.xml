@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/currency_view_holder_country_flag"
+        android:layout_width="@dimen/currency_icon_width"
+        android:layout_height="@dimen/currency_icon_height"
+        android:layout_marginStart="@dimen/margin_default"
+        android:layout_marginTop="@dimen/margin_default"
+        android:layout_marginBottom="@dimen/margin_default"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:src="@drawable/revolut"/>
+
+    <TextView
+        style="@style/currency_font"
+        android:id="@+id/currency_view_holder_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_default"
+        app:layout_constraintTop_toTopOf="@id/currency_view_holder_country_flag"
+        app:layout_constraintStart_toEndOf="@id/currency_view_holder_country_flag"
+        tools:text="CURRENCY"/>
+
+    <TextView
+        style="@style/currency_description"
+        android:id="@+id/currency_view_holder_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_default"
+        app:layout_constraintStart_toEndOf="@id/currency_view_holder_country_flag"
+        app:layout_constraintTop_toBottomOf="@id/currency_view_holder_name"
+        tools:text="Some description"/>
+
+    <EditText
+        style="@style/currency_input"
+        android:id="@+id/currency_view_holder_input"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:layout_marginEnd="@dimen/margin_default"
+        app:layout_constraintTop_toTopOf="@id/currency_view_holder_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="666.6666"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
