@@ -63,4 +63,9 @@ public class MainViewState extends ViewModel implements MainContract.View, MainC
     public void setRatesAdapter(@NonNull CurrenciesAdapter adapter) {
 
     }
+
+    @Override
+    public void viewCreated() {
+        presenter.viewCreated();
+    }
 }

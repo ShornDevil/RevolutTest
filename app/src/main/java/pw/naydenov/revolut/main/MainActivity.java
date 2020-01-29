@@ -1,10 +1,11 @@
-package pw.naydenov.revolut;
+package pw.naydenov.revolut.main;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
 import android.os.Bundle;
 
+import pw.naydenov.revolut.R;
 import pw.naydenov.revolut.main.mvp.MainFragment;
 
 public class MainActivity extends AppCompatActivity {

@@ -49,7 +49,7 @@ public class MainModule {
 
     @Provides
     @Singleton
-    MainPresenter provideMainPresenter() {
-        return new MainPresenter();
+    MainPresenter provideMainPresenter(MainReository reository) {
+        return new MainPresenter(reository);
     }
 }

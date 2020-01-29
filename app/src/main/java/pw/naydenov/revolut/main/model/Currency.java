@@ -5,5 +5,6 @@ public class Currency {
     private String id;
     private String descriprion;
     private float rate;
+    private String icon;
 
 }

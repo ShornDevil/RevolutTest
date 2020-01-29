@@ -8,6 +8,7 @@ import pw.naydenov.revolut.main.domain.CurrenciesAdapter;
  * Интерфейс взаиможействия между презентером и фрагментом главного экрана
  */
 public interface MainContract {
+
     interface View {
 
         /**
@@ -27,6 +28,11 @@ public interface MainContract {
     }
 
     interface Presenter {
+
+        /**
+         * Уведомить презентер о создании вью
+         */
+        void viewCreated();
 
 
     }

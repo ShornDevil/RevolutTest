@@ -9,17 +9,12 @@ import okhttp3.HttpUrl;
 import okhttp3.Request;
 import pw.naydenov.revolut.main.model.Url;
 
-/**
- * Запрос котировок валют
- */
-public class RatesRequest {
+public class SymbolsRequest {
 
-    private String baseCurrency;
     private String apiUrl;
 
-    public RatesRequest(@NonNull String apiUrl, @NonNull String baseCurrency) {
+    public SymbolsRequest(@NonNull String apiUrl) {
         this.apiUrl = apiUrl;
-        this.baseCurrency = baseCurrency;
     }
 
     public Request create() throws MalformedURLException {
@@ -27,8 +22,7 @@ public class RatesRequest {
         HttpUrl.Builder builder = new HttpUrl.Builder()
                 .scheme(url.getProtocol())
                 .host(url.getHost())
-                .addPathSegment(Url.CURRENCIES_LATEST_ENDPOINT)
-                .addQueryParameter(Url.CURRENCIES_BASE, baseCurrency)
+                .addPathSegment(Url.SUPPORTED_SYMBOLS_ENDPOINT)
                 .addQueryParameter(Url.ACCESS_KEY_PARAMETER, Url.FIXER_API_KEY);
 
         return new Request.Builder()
@@ -36,3 +30,4 @@ public class RatesRequest {
                 .build();
     }
 }
+
