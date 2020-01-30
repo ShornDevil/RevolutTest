@@ -46,4 +46,8 @@ public class CurrenciesAdapter extends RecyclerView.Adapter {
     public PublishSubject<Currency> getCurrencyClickStream() {
         return currencyClickStream;
     }
+
+    public void updateRate(int position) {
+        this.view
+    }
 }

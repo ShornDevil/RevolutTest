@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.Objects;
 
 import pw.naydenov.revolut.R;
-import pw.naydenov.revolut.main.RevolutApplication;
+import pw.naydenov.revolut.RevolutApplication;
 import pw.naydenov.revolut.main.domain.CurrenciesAdapter;
 
 /**

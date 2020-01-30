@@ -1,4 +1,4 @@
-package pw.naydenov.revolut.main;
+package pw.naydenov.revolut;
 
 import android.app.Application;
 
