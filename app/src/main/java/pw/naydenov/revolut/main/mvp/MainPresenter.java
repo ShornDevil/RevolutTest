@@ -82,8 +82,10 @@ public class MainPresenter implements MainContract.Presenter {
                     if (ratesObject instanceof Rates) {
                         Rates rates = (Rates) ratesObject;
                         if (rates.getBase() != null && rates.getDate() != null && rates.getRates() != null) {
+                            Log.e("TAG", "viewCreated: Rates received OK!");
                             boolean refreshFlag = false;
                             if (viewCurrencies.isEmpty()) {
+                                Log.e("TAG", "viewCreated: viewCurrencies.isEmpty() = true");
                                 viewCurrencies.add(Currency
                                         .builder()
                                         .id(rates.getBase())
@@ -91,6 +93,7 @@ public class MainPresenter implements MainContract.Presenter {
                                 );
                                 refreshFlag = true;
                             } else if (!viewCurrencies.get(0).getId().equals(rates.getBase())) {
+                                Log.e("TAG", "viewCreated: viewCurrenciers.get(0) != rates.getBase()");
                                 viewCurrencies.clear();
                                 viewCurrencies.add(Currency
                                         .builder()
@@ -101,11 +104,16 @@ public class MainPresenter implements MainContract.Presenter {
                             }
 
                             Iterator<Currency> iterator = viewCurrencies.iterator();
-                            iterator.next();
+                            if (iterator.hasNext()) {
+                                iterator.next();
+                                Log.e("TAG", "viewCreated: iterator.hasNext()=true -> iterator.next()");
+                            }
                             int i = 1;
                             while (iterator.hasNext()) {
+                                Log.e("TAG", "viewCreated: iterator.hasNext()=true");
                                 Currency currency = iterator.next();
                                 if (rates.getRates().containsKey(currency.getId())) {
+                                    Log.e("TAG", "viewCreated: rates containsKet(currency.getId())");
                                     currency.setRate(rates.getRates().get(currency.getId()));
                                     rates.getRates().remove(currency.getId());
                                     adapter.notifyItemChanged(i);
@@ -114,6 +122,7 @@ public class MainPresenter implements MainContract.Presenter {
                             }
 
                             if (!rates.getRates().isEmpty()) {
+                                Log.e("TAG", "viewCreated: rates.getRates.isEmpty() = false");
                                 for (Map.Entry<String, Float> rate : rates.getRates().entrySet()) {
                                     viewCurrencies.add(Currency
                                             .builder()
@@ -121,8 +130,10 @@ public class MainPresenter implements MainContract.Presenter {
                                             .rate(rate.getValue())
                                             .build()
                                     );
+                                    Log.e("TAG", "viewCreated: currency added!");
                                 }
                                 adapter.notifyDataSetChanged();
+
                             }
 
                             if (refreshFlag) {
