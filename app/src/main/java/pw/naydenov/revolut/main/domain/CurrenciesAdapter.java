@@ -1,5 +1,6 @@
 package pw.naydenov.revolut.main.domain;
 
+import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -8,12 +9,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import io.reactivex.subjects.PublishSubject;
+import pw.naydenov.revolut.R;
 import pw.naydenov.revolut.main.model.Currency;
 
 /**
  * Адаптер для списка валют
  */
-public class CurrenciesAdapter extends RecyclerView.Adapter {
+public class CurrenciesAdapter extends RecyclerView.Adapter<CurrencyViewHolder> {
 
     private List<Currency> currencies;
 //    private MultiplierUpdater updater;
@@ -26,13 +28,13 @@ public class CurrenciesAdapter extends RecyclerView.Adapter {
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return null;
+    public CurrencyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new CurrencyViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.currency_view_holder, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-
+    public void onBindViewHolder(@NonNull CurrencyViewHolder holder, int position) {
+        holder.setData(currencies.get(position));
     }
 
     @Override
@@ -47,7 +49,4 @@ public class CurrenciesAdapter extends RecyclerView.Adapter {
         return currencyClickStream;
     }
 
-    public void updateRate(int position) {
-        this.view
-    }
 }

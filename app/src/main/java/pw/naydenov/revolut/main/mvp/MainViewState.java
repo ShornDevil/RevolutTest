@@ -13,12 +13,14 @@ import pw.naydenov.revolut.main.domain.CurrenciesAdapter;
 public class MainViewState extends ViewModel implements MainContract.View, MainContract.Presenter {
 
     private MutableLiveData<Boolean> setLoadingStream;
+    private MutableLiveData<CurrenciesAdapter> currenciesRatesAdapterStream;
 
     @Inject
     MainPresenter presenter;
 
     public MainViewState() {
         setLoadingStream = new MutableLiveData<>();
+        currenciesRatesAdapterStream = new MutableLiveData<>();
     }
 
     /**
@@ -29,6 +31,7 @@ public class MainViewState extends ViewModel implements MainContract.View, MainC
      */
     public void attachView(LifecycleOwner lifecycleOwner, MainContract.View view) {
         setLoadingStream.observe(lifecycleOwner, view::setLoading);
+        currenciesRatesAdapterStream.observe(lifecycleOwner, view::setRatesAdapter);
     }
 
     /**
@@ -38,6 +41,7 @@ public class MainViewState extends ViewModel implements MainContract.View, MainC
      */
     public void detachView(LifecycleOwner lifecycleOwner) {
         setLoadingStream.removeObservers(lifecycleOwner);
+        currenciesRatesAdapterStream.removeObservers(lifecycleOwner);
     }
 
     /**
@@ -52,18 +56,25 @@ public class MainViewState extends ViewModel implements MainContract.View, MainC
         }
     }
 
-
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setLoading(@NonNull Boolean isLoading) {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setRatesAdapter(@NonNull CurrenciesAdapter adapter) {
-
+        currenciesRatesAdapterStream.postValue(adapter);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void viewCreated() {
         presenter.viewCreated();

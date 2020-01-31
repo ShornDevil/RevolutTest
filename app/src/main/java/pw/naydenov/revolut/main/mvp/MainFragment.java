@@ -1,6 +1,7 @@
 package pw.naydenov.revolut.main.mvp;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import java.util.Objects;
 import pw.naydenov.revolut.R;
 import pw.naydenov.revolut.RevolutApplication;
 import pw.naydenov.revolut.main.domain.CurrenciesAdapter;
+import pw.naydenov.revolut.main.domain.CurrencyViewHolder;
 
 /**
  * Главный экран с котировками

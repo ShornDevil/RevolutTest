@@ -32,7 +32,7 @@ import pw.naydenov.revolut.main.util.MultiplierUtil;
 public class MainPresenter implements MainContract.Presenter {
 
     private MainReository reository;
-    private MultiplierUtil util;
+    private MultiplierUtil multiplier;
 
     private Symbols symbols;
     private List<Currency> viewCurrencies;
@@ -43,9 +43,9 @@ public class MainPresenter implements MainContract.Presenter {
     private DisposableContainer disposableContainer;
 
     public MainPresenter(@NonNull MainReository reository,
-                         @NonNull MultiplierUtil util) {
+                         @NonNull MultiplierUtil multiplier) {
         this.reository = reository;
-        this.util = util;
+        this.multiplier = multiplier;
 
         viewCurrencies = new LinkedList<>();
         adapter = new CurrenciesAdapter(viewCurrencies);
@@ -108,7 +108,7 @@ public class MainPresenter implements MainContract.Presenter {
                                 if (rates.getRates().containsKey(currency.getId())) {
                                     currency.setRate(rates.getRates().get(currency.getId()));
                                     rates.getRates().remove(currency.getId());
-                                    adapter.updateRate(i);
+                                    adapter.notifyItemChanged(i);
                                     i++;
                                 }
                             }
@@ -126,7 +126,7 @@ public class MainPresenter implements MainContract.Presenter {
                             }
 
                             if (refreshFlag) {
-                                multiplier.resetDefault();
+                                multiplier.resetMultiplier();
                             }
 
                         } else {

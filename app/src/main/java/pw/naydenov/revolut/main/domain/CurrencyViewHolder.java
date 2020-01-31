@@ -34,6 +34,12 @@ public class CurrencyViewHolder extends RecyclerView.ViewHolder implements Multi
 
     public void setData(@NonNull Currency currency) {
         this.currency = currency;
+        name.setText(currency.getId());
+        if (currency.getRate() > 0.0f) {
+            input.setText(currency.getRate() + "");
+            input.setFocusable(false);
+            input.setClickable(false);
+        } else input.setText("[base]");
     }
 
     @Override

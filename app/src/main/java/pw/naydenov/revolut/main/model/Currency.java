@@ -9,7 +9,7 @@ public class Currency {
 
     private String id;
     private String descriprion;
-    private float rate;
+    private float rate = -1.1f;
     private String icon;
 
     @Override
