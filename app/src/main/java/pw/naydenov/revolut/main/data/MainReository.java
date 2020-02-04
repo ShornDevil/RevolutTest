@@ -13,6 +13,7 @@ import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
 import pw.naydenov.revolut.main.model.Rates;
+import pw.naydenov.revolut.main.model.Symbols;
 
 /**
  * Репозиторий для главного экрана
@@ -39,6 +40,10 @@ public class MainReository {
     public Rates requestRates(@NonNull String url, @NonNull String currencyId) throws MalformedURLException, IOException {
         Response response = okHttpClient.newCall(new RatesRequest(url, currencyId).create()).execute();
         return gson.fromJson(response.body().string(), Rates.class);
+    }
+
+    public Symbols requestSymbols() {
+        Response response = okHttpClient.newCall(new SymbolsRequest(url).create()).execute();
     }
 
     /**

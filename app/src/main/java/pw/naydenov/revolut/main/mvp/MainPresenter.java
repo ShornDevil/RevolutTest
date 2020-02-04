@@ -13,6 +13,7 @@ import java.util.Map;
 
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -34,6 +35,7 @@ public class MainPresenter implements MainContract.Presenter {
     private MainReository reository;
     private MultiplierUtil multiplier;
 
+    private String baseCurrency;
     private Symbols symbols;
     private List<Currency> viewCurrencies;
     private MainContract.View view;
@@ -47,6 +49,7 @@ public class MainPresenter implements MainContract.Presenter {
         this.reository = reository;
         this.multiplier = multiplier;
 
+        baseCurrency = "EUR";
         viewCurrencies = new LinkedList<>();
         adapter = new CurrenciesAdapter(viewCurrencies);
         disposableContainer = new CompositeDisposable();
@@ -57,6 +60,18 @@ public class MainPresenter implements MainContract.Presenter {
      */
     public void attachView(MainContract.View view) {
         this.view = view;
+        disposableContainer.add(
+                adapter
+                        .getCurrencyClickStream()
+                        .subscribe(item -> {
+                            baseCurrency = item.getId();
+                            int oldPosition = viewCurrencies.indexOf(item);
+                            viewCurrencies.remove(item);
+                            item.setRate(-1.0f);
+                            viewCurrencies.add(0, item);
+                            adapter.notifyItemMoved(oldPosition, 0);
+                        })
+        );
     }
 
     /**
@@ -69,95 +84,83 @@ public class MainPresenter implements MainContract.Presenter {
         disposableContainer.add(Observable.create(
                 subscriber -> {
                     while (true) {
-                        subscriber.onNext(reository.requestRates(Url.CURRENCIES_RATES_API, "EUR"));
+                        subscriber.onNext(reository.requestRates(Url.CURRENCIES_RATES_API, baseCurrency));
                         Thread.sleep(1000);
-                        if (isStop) {
-                            break;
-                        }
                     }
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(ratesObject -> {
-                    if (ratesObject instanceof Rates) {
-                        Rates rates = (Rates) ratesObject;
-                        if (rates.getBase() != null && rates.getDate() != null && rates.getRates() != null) {
-                            Log.e("TAG", "viewCreated: Rates received OK!");
-                            boolean refreshFlag = false;
-                            if (viewCurrencies.isEmpty()) {
-                                Log.e("TAG", "viewCreated: viewCurrencies.isEmpty() = true");
-                                viewCurrencies.add(Currency
-                                        .builder()
-                                        .id(rates.getBase())
-                                        .build()
-                                );
-                                refreshFlag = true;
-                            } else if (!viewCurrencies.get(0).getId().equals(rates.getBase())) {
-                                Log.e("TAG", "viewCreated: viewCurrenciers.get(0) != rates.getBase()");
-                                viewCurrencies.clear();
-                                viewCurrencies.add(Currency
-                                        .builder()
-                                        .id(rates.getBase())
-                                        .build()
-                                );
-                                refreshFlag = true;
-                            }
+                    updateRates(ratesObject);
+                })
+        );
 
-                            Iterator<Currency> iterator = viewCurrencies.iterator();
-                            if (iterator.hasNext()) {
-                                iterator.next();
-                                Log.e("TAG", "viewCreated: iterator.hasNext()=true -> iterator.next()");
-                            }
-                            int i = 1;
-                            while (iterator.hasNext()) {
-                                Log.e("TAG", "viewCreated: iterator.hasNext()=true");
-                                Currency currency = iterator.next();
-                                if (rates.getRates().containsKey(currency.getId())) {
-                                    Log.e("TAG", "viewCreated: rates containsKet(currency.getId())");
-                                    currency.setRate(rates.getRates().get(currency.getId()));
-                                    rates.getRates().remove(currency.getId());
-                                    adapter.notifyItemChanged(i);
-                                    i++;
-                                }
-                            }
+        disposableContainer.add(
+                Single
+                        .fromCallable(() -> reository.requestSymbols())
+        );
+    }
 
-                            if (!rates.getRates().isEmpty()) {
-                                Log.e("TAG", "viewCreated: rates.getRates.isEmpty() = false");
-                                for (Map.Entry<String, Float> rate : rates.getRates().entrySet()) {
-                                    viewCurrencies.add(Currency
-                                            .builder()
-                                            .id(rate.getKey())
-                                            .rate(rate.getValue())
-                                            .build()
-                                    );
-                                    Log.e("TAG", "viewCreated: currency added!");
-                                }
-                                adapter.notifyDataSetChanged();
+    private void updateRates (Object ratesObject) {
+        if (ratesObject instanceof Rates) {
+            Rates rates = (Rates) ratesObject;
+            if (rates.getBase() != null && rates.getDate() != null && rates.getRates() != null) {
+                boolean refreshFlag = false;
+                if (viewCurrencies.isEmpty()) {
+                    viewCurrencies.add(Currency
+                            .builder()
+                            .id(rates.getBase())
+                            .build()
+                    );
+                    refreshFlag = true;
+                } else if (!viewCurrencies.get(0).getId().equals(rates.getBase())) {
+                    viewCurrencies.clear();
+                    viewCurrencies.add(Currency
+                            .builder()
+                            .id(rates.getBase())
+                            .build()
+                    );
+                    refreshFlag = true;
+                }
 
-                            }
-
-                            if (refreshFlag) {
-                                multiplier.resetMultiplier();
-                            }
-
-                        } else {
-                            // something wrong
-                        }
+                Iterator<Currency> iterator = viewCurrencies.iterator();
+                if (iterator.hasNext()) {
+                    iterator.next();
+                }
+                int i = 1;
+                while (iterator.hasNext()) {
+                    Currency currency = iterator.next();
+                    if (rates.getRates().containsKey(currency.getId())) {
+                        currency.setRate(rates.getRates().get(currency.getId()));
+                        rates.getRates().remove(currency.getId());
+                        adapter.notifyItemChanged(i);
+                        i++;
                     }
-                })
-        );
-/*
-        disposableContainer.add(Observable
-                .fromCallable(() -> {
-                    return reository.requestRates(Url.CURRENCIES_RATES_API, "EUR");
-                })
-                .map(rates -> {
+                    if (currency.getDescriprion() == null || currency.getDescriprion().isEmpty() && symbols.getSuccess()) {
+                        currency.setDescriprion(symbols.getSymbols().get(currency.getId()));
+                    }
+                }
 
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe()
-        );
-*/
+                if (!rates.getRates().isEmpty()) {
+                    for (Map.Entry<String, Float> rate : rates.getRates().entrySet()) {
+                        viewCurrencies.add(Currency
+                                .builder()
+                                .id(rate.getKey())
+                                .rate(rate.getValue())
+                                .build()
+                        );
+                    }
+                    adapter.notifyDataSetChanged();
+
+                }
+
+                if (refreshFlag) {
+                    multiplier.resetMultiplier();
+                }
+
+            } else {
+                // something wrong
+            }
+        }
     }
 }

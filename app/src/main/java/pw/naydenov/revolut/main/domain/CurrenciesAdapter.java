@@ -35,6 +35,7 @@ public class CurrenciesAdapter extends RecyclerView.Adapter<CurrencyViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull CurrencyViewHolder holder, int position) {
         holder.setData(currencies.get(position));
+        holder.itemView.setOnClickListener(view -> currencyClickStream.onNext(currencies.get(position)));
     }
 
     @Override
