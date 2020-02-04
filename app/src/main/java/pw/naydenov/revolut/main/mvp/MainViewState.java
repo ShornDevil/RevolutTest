@@ -1,9 +1,12 @@
 package pw.naydenov.revolut.main.mvp;
 
+import android.util.Pair;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import androidx.recyclerview.widget.RecyclerView;
 
 import javax.inject.Inject;
 
@@ -14,6 +17,7 @@ public class MainViewState extends ViewModel implements MainContract.View, MainC
 
     private MutableLiveData<Boolean> setLoadingStream;
     private MutableLiveData<CurrenciesAdapter> currenciesRatesAdapterStream;
+    private MutableLiveData<Pair<Integer, Float>> updateRatesStream;
 
     @Inject
     MainPresenter presenter;
@@ -21,6 +25,7 @@ public class MainViewState extends ViewModel implements MainContract.View, MainC
     public MainViewState() {
         setLoadingStream = new MutableLiveData<>();
         currenciesRatesAdapterStream = new MutableLiveData<>();
+        updateRatesStream = new MutableLiveData<>();
     }
 
     /**
@@ -32,6 +37,7 @@ public class MainViewState extends ViewModel implements MainContract.View, MainC
     public void attachView(LifecycleOwner lifecycleOwner, MainContract.View view) {
         setLoadingStream.observe(lifecycleOwner, view::setLoading);
         currenciesRatesAdapterStream.observe(lifecycleOwner, view::setRatesAdapter);
+        updateRatesStream.observe(lifecycleOwner, view::updateItemAtPosition);
     }
 
     /**
@@ -42,6 +48,7 @@ public class MainViewState extends ViewModel implements MainContract.View, MainC
     public void detachView(LifecycleOwner lifecycleOwner) {
         setLoadingStream.removeObservers(lifecycleOwner);
         currenciesRatesAdapterStream.removeObservers(lifecycleOwner);
+        updateRatesStream.removeObservers(lifecycleOwner);
     }
 
     /**
@@ -76,7 +83,15 @@ public class MainViewState extends ViewModel implements MainContract.View, MainC
      * {@inheritDoc}
      */
     @Override
-    public void viewCreated() {
-        presenter.viewCreated();
+    public void updateItemAtPosition(@NonNull Pair<Integer, Float> positionAndRate) {
+        updateRatesStream.postValue(positionAndRate);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void viewCreated(@NonNull RecyclerView.LayoutManager layoutManager) {
+        presenter.viewCreated(layoutManager);
     }
 }

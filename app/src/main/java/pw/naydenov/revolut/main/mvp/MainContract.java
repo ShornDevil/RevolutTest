@@ -1,6 +1,9 @@
 package pw.naydenov.revolut.main.mvp;
 
+import android.util.Pair;
+
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import pw.naydenov.revolut.main.domain.CurrenciesAdapter;
 
@@ -25,6 +28,13 @@ public interface MainContract {
          */
         void setRatesAdapter(@NonNull CurrenciesAdapter adapter);
 
+        /**
+         * Обновить котировку у итема на определённой позиции
+         *
+         * @param positionAndRate пара - позиция и новая цена
+         */
+        void updateItemAtPosition(@NonNull Pair<Integer, Float> positionAndRate);
+
     }
 
     interface Presenter {
@@ -32,7 +42,7 @@ public interface MainContract {
         /**
          * Уведомить презентер о создании вью
          */
-        void viewCreated();
+        void viewCreated(RecyclerView.LayoutManager layoutManager);
 
 
     }

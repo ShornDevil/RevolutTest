@@ -1,9 +1,11 @@
 package pw.naydenov.revolut.main.mvp;
 
 import android.util.Log;
+import android.util.Pair;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -40,7 +42,6 @@ public class MainPresenter implements MainContract.Presenter {
     private List<Currency> viewCurrencies;
     private MainContract.View view;
     private CurrenciesAdapter adapter;
-    private boolean isStop = false;
 
     private DisposableContainer disposableContainer;
 
@@ -51,7 +52,7 @@ public class MainPresenter implements MainContract.Presenter {
 
         baseCurrency = "EUR";
         viewCurrencies = new LinkedList<>();
-        adapter = new CurrenciesAdapter(viewCurrencies);
+        adapter = new CurrenciesAdapter(viewCurrencies, multiplier);
         disposableContainer = new CompositeDisposable();
     }
 
@@ -78,7 +79,7 @@ public class MainPresenter implements MainContract.Presenter {
      * {@inheritDoc}
      */
     @Override
-    public void viewCreated() {
+    public void viewCreated(@NonNull RecyclerView.LayoutManager layoutManager) {
         view.setRatesAdapter(adapter);
 
         disposableContainer.add(Observable.create(
@@ -97,11 +98,19 @@ public class MainPresenter implements MainContract.Presenter {
 
         disposableContainer.add(
                 Single
-                        .fromCallable(() -> reository.requestSymbols())
+                        .fromCallable(() -> reository.requestSymbols(Url.CURRENCIES_DESCRIPTION_API))
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(symbolsResponse -> symbols = symbolsResponse)
         );
     }
 
-    private void updateRates (Object ratesObject) {
+    /**
+     * Обновляет котировки, сверяет базовую валюту, добавляет недостающие валюты
+     *
+     * @param ratesObject объект с котривками, полученый с бэка
+     */
+    private void updateRates(Object ratesObject) {
         if (ratesObject instanceof Rates) {
             Rates rates = (Rates) ratesObject;
             if (rates.getBase() != null && rates.getDate() != null && rates.getRates() != null) {
@@ -133,11 +142,16 @@ public class MainPresenter implements MainContract.Presenter {
                     if (rates.getRates().containsKey(currency.getId())) {
                         currency.setRate(rates.getRates().get(currency.getId()));
                         rates.getRates().remove(currency.getId());
-                        adapter.notifyItemChanged(i);
+//                        adapter.notifyItemChanged(i);
+                        Log.e("TAG", "updateRates: view.updateItemAtPosition ["+i+":"+currency.getRate()+"]");
+                        view.updateItemAtPosition(new Pair<Integer, Float>(i, currency.getRate()));
+
                         i++;
                     }
-                    if (currency.getDescriprion() == null || currency.getDescriprion().isEmpty() && symbols.getSuccess()) {
-                        currency.setDescriprion(symbols.getSymbols().get(currency.getId()));
+                    if (currency.getDescriprion() == null && symbols != null) {
+                        if (symbols.getSuccess() != null && symbols.getSuccess()) {
+                            currency.setDescriprion(symbols.getSymbols().get(currency.getId()));
+                        }
                     }
                 }
 

@@ -5,7 +5,7 @@ public class Url {
     /**
      * Апи для получения описания валют
      */
-    public static final String CURRENCIES_DESCRIPTION_API = "https://free.currconv.com/api/v7/currencies?apiKey=do-not-use-this-key";
+    public static final String CURRENCIES_DESCRIPTION_API = "http://data.fixer.io/api/";
 
     /**
      * Апи для получения котировок

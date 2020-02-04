@@ -11,6 +11,7 @@ import java.util.List;
 import io.reactivex.subjects.PublishSubject;
 import pw.naydenov.revolut.R;
 import pw.naydenov.revolut.main.model.Currency;
+import pw.naydenov.revolut.main.util.MultiplierUtil;
 
 /**
  * Адаптер для списка валют
@@ -18,11 +19,12 @@ import pw.naydenov.revolut.main.model.Currency;
 public class CurrenciesAdapter extends RecyclerView.Adapter<CurrencyViewHolder> {
 
     private List<Currency> currencies;
-//    private MultiplierUpdater updater;
+    private MultiplierUtil multiplierUtil;
     private PublishSubject<Currency> currencyClickStream;
 
-    public CurrenciesAdapter(@NonNull List<Currency> currencies) {
+    public CurrenciesAdapter(@NonNull List<Currency> currencies, @NonNull MultiplierUtil multiplierUtil) {
         this.currencies = currencies;
+        this.multiplierUtil = multiplierUtil;
         currencyClickStream = PublishSubject.create();
     }
 
@@ -34,7 +36,7 @@ public class CurrenciesAdapter extends RecyclerView.Adapter<CurrencyViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull CurrencyViewHolder holder, int position) {
-        holder.setData(currencies.get(position));
+        holder.setData(currencies.get(position), multiplierUtil.getMultiplier());
         holder.itemView.setOnClickListener(view -> currencyClickStream.onNext(currencies.get(position)));
     }
 
@@ -49,5 +51,10 @@ public class CurrenciesAdapter extends RecyclerView.Adapter<CurrencyViewHolder> 
     public PublishSubject<Currency> getCurrencyClickStream() {
         return currencyClickStream;
     }
+
+    private void hz() {
+        this.
+    }
+
 
 }

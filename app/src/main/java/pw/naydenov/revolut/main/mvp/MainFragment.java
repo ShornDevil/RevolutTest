@@ -2,6 +2,7 @@ package pw.naydenov.revolut.main.mvp;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,8 @@ import pw.naydenov.revolut.R;
 import pw.naydenov.revolut.RevolutApplication;
 import pw.naydenov.revolut.main.domain.CurrenciesAdapter;
 import pw.naydenov.revolut.main.domain.CurrencyViewHolder;
+import pw.naydenov.revolut.main.util.MultiplierListener;
+import pw.naydenov.revolut.main.util.RateUpdatable;
 
 /**
  * Главный экран с котировками
@@ -42,7 +45,7 @@ public class MainFragment extends Fragment implements MainContract.View {
         super.onViewCreated(view, savedInstanceState);
         currencies = view.findViewById(R.id.main_fragment_currencies_recycler);
         currencies.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
-        viewState.viewCreated();
+        viewState.viewCreated(currencies.getLayoutManager());
     }
 
     @Override
@@ -65,5 +68,25 @@ public class MainFragment extends Fragment implements MainContract.View {
     @Override
     public void setRatesAdapter(@NonNull CurrenciesAdapter adapter) {
         currencies.setAdapter(adapter);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void updateItemAtPosition(@NonNull Pair<Integer, Float> positionAndRate) {
+        RecyclerView.ViewHolder holder = currencies.findViewHolderForAdapterPosition(positionAndRate.first);
+        if (holder instanceof CurrencyViewHolder) {
+            Log.e("TAG", "updateItemAtPosition: is instance of CurrencyViewHolder ["+positionAndRate.first+"]");
+//            ((RateUpdatable) holder).updateRate(positionAndRate.second);
+        } else {
+            Log.e("TAG", "updateItemAtPosition: is NOT instance of CurrencyViewHolder ["+positionAndRate.first+"]");
+        }
+        /*
+        View view = currencies.getLayoutManager().findViewByPosition(positionAndRate.first);
+        if (view instanceof RateUpdatable) {
+            ((RateUpdatable) view).updateRate(positionAndRate.second);
+        }
+         */
     }
 }

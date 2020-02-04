@@ -6,9 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Утилита для обмена множителем. Идея проста - перввый элемент в списке валют отправляет свои изменения
- * из поля ввода в данную утилиту, элементы реализуют интерфейс наблюдателя и получают изменения при
- * их появлении - тупо паттерн наблюдатель
+ * Утилита для обмена множителем
  */
 public class MultiplierUtil {
     private final float DEFAULT_MULTIPLIER = 1.0f;
@@ -58,5 +56,12 @@ public class MultiplierUtil {
      */
     public void resetMultiplier() {
         multiplier = DEFAULT_MULTIPLIER;
+    }
+
+    /**
+     * @return Возвращает текущий множитель
+     */
+    public float getMultiplier() {
+        return multiplier;
     }
 }

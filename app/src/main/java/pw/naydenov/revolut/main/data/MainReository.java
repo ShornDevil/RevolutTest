@@ -42,8 +42,17 @@ public class MainReository {
         return gson.fromJson(response.body().string(), Rates.class);
     }
 
-    public Symbols requestSymbols() {
+    /**
+     * Запрашивает полный список валют и их описаний
+     *
+     * @param url   адрес апи
+     * @return      объет, содержащий список всех валют
+     * @throws MalformedURLException
+     * @throws IOException
+     */
+    public Symbols requestSymbols(@NonNull String url) throws MalformedURLException, IOException {
         Response response = okHttpClient.newCall(new SymbolsRequest(url).create()).execute();
+        return gson.fromJson(response.body().string(), Symbols.class);
     }
 
     /**
