@@ -7,6 +7,7 @@ import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -66,11 +67,31 @@ public class MainPresenter implements MainContract.Presenter {
                         .getCurrencyClickStream()
                         .subscribe(item -> {
                             baseCurrency = item.getId();
+                            adapter.removeMultiplierListener(viewCurrencies.indexOf(item));
+                            viewCurrencies.clear();
+                            multiplier.clearMultiplierListeners();
+
+                            /*
                             int oldPosition = viewCurrencies.indexOf(item);
                             viewCurrencies.remove(item);
                             item.setRate(-1.0f);
                             viewCurrencies.add(0, item);
                             adapter.notifyItemMoved(oldPosition, 0);
+                            multiplier.resetMultiplier();
+                            adapter.notifyDataSetChanged();
+                             */
+
+                        })
+        );
+
+        disposableContainer.add(
+                adapter
+                        .getMultiplierChangeStream()
+                        .subscribe(multiplierString -> {
+                            try {
+                                float newMultiplier = Float.parseFloat(multiplierString);
+                                multiplier.onMultiplierChange(newMultiplier);
+                            } catch (NumberFormatException ex) {}
                         })
         );
     }
@@ -132,6 +153,12 @@ public class MainPresenter implements MainContract.Presenter {
                     refreshFlag = true;
                 }
 
+                if (viewCurrencies.get(0).getDescriprion() == null && symbols != null) {
+                    if (symbols.getSuccess() != null && symbols.getSuccess()) {
+                        viewCurrencies.get(0).setDescriprion(symbols.getSymbols().get(viewCurrencies.get(0).getId()));
+                    }
+                }
+
                 Iterator<Currency> iterator = viewCurrencies.iterator();
                 if (iterator.hasNext()) {
                     iterator.next();
@@ -142,17 +169,16 @@ public class MainPresenter implements MainContract.Presenter {
                     if (rates.getRates().containsKey(currency.getId())) {
                         currency.setRate(rates.getRates().get(currency.getId()));
                         rates.getRates().remove(currency.getId());
-//                        adapter.notifyItemChanged(i);
-                        Log.e("TAG", "updateRates: view.updateItemAtPosition ["+i+":"+currency.getRate()+"]");
-                        view.updateItemAtPosition(new Pair<Integer, Float>(i, currency.getRate()));
+                        adapter.updateRate(i, currency.getRate());
 
-                        i++;
                     }
                     if (currency.getDescriprion() == null && symbols != null) {
                         if (symbols.getSuccess() != null && symbols.getSuccess()) {
                             currency.setDescriprion(symbols.getSymbols().get(currency.getId()));
+                            adapter.notifyItemChanged(i);
                         }
                     }
+                    i++;
                 }
 
                 if (!rates.getRates().isEmpty()) {
@@ -173,7 +199,7 @@ public class MainPresenter implements MainContract.Presenter {
                 }
 
             } else {
-                // something wrong
+                // something wrong - no rates received
             }
         }
     }
