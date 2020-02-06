@@ -70,23 +70,4 @@ public class MainFragment extends Fragment implements MainContract.View {
         currencies.setAdapter(adapter);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void updateItemAtPosition(@NonNull Pair<Integer, Float> positionAndRate) {
-        RecyclerView.ViewHolder holder = currencies.findViewHolderForAdapterPosition(positionAndRate.first);
-        if (holder instanceof CurrencyViewHolder) {
-            Log.e("TAG", "updateItemAtPosition: is instance of CurrencyViewHolder ["+positionAndRate.first+"]");
-//            ((RateUpdatable) holder).updateRate(positionAndRate.second);
-        } else {
-            Log.e("TAG", "updateItemAtPosition: is NOT instance of CurrencyViewHolder ["+positionAndRate.first+"]");
-        }
-        /*
-        View view = currencies.getLayoutManager().findViewByPosition(positionAndRate.first);
-        if (view instanceof RateUpdatable) {
-            ((RateUpdatable) view).updateRate(positionAndRate.second);
-        }
-         */
-    }
 }

@@ -59,7 +59,11 @@ public class CurrenciesAdapter extends RecyclerView.Adapter<CurrencyViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull CurrencyViewHolder holder, int position) {
         holder.setData(currencies.get(position), multiplierUtil.getMultiplier());
-        holder.itemView.setOnClickListener(view -> currencyClickStream.onNext(currencies.get(position)));
+        holder.itemView.setOnClickListener(view -> {
+            currencyClickStream.onNext(currencies.get(position));
+            holder.itemView.setOnClickListener(null);
+            view.setOnClickListener(null);
+        });
         if (position == 0) {
             holder.setInputListener(inputTextWatcher);
         } else {
@@ -106,10 +110,20 @@ public class CurrenciesAdapter extends RecyclerView.Adapter<CurrencyViewHolder> 
         }
     }
 
+    /**
+     * Возвращает поток изменеий множителя
+     *
+     * @return поток изменений множителя
+     */
     public PublishSubject<String> getMultiplierChangeStream() {
         return multiplierChangeStream;
     }
 
+    /**
+     * Удаляет слушатель изменений множителя из вьюхолдера, находящегося на определённой позиции
+     *
+     * @param position позиция вьюхолдера
+     */
     public void removeMultiplierListener(int position) {
         if (recyclerView != null) {
             CurrencyViewHolder holder = (CurrencyViewHolder) recyclerView.findViewHolderForAdapterPosition(position);

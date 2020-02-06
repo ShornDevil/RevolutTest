@@ -28,13 +28,6 @@ public interface MainContract {
          */
         void setRatesAdapter(@NonNull CurrenciesAdapter adapter);
 
-        /**
-         * Обновить котировку у итема на определённой позиции
-         *
-         * @param positionAndRate пара - позиция и новая цена
-         */
-        void updateItemAtPosition(@NonNull Pair<Integer, Float> positionAndRate);
-
     }
 
     interface Presenter {

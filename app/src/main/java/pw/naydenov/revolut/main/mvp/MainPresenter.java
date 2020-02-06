@@ -1,25 +1,17 @@
 package pw.naydenov.revolut.main.mvp;
 
-import android.util.Log;
-import android.util.Pair;
-
-import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.disposables.DisposableContainer;
 import io.reactivex.schedulers.Schedulers;
 import pw.naydenov.revolut.main.data.MainReository;
@@ -70,17 +62,6 @@ public class MainPresenter implements MainContract.Presenter {
                             adapter.removeMultiplierListener(viewCurrencies.indexOf(item));
                             viewCurrencies.clear();
                             multiplier.clearMultiplierListeners();
-
-                            /*
-                            int oldPosition = viewCurrencies.indexOf(item);
-                            viewCurrencies.remove(item);
-                            item.setRate(-1.0f);
-                            viewCurrencies.add(0, item);
-                            adapter.notifyItemMoved(oldPosition, 0);
-                            multiplier.resetMultiplier();
-                            adapter.notifyDataSetChanged();
-                             */
-
                         })
         );
 
@@ -91,7 +72,8 @@ public class MainPresenter implements MainContract.Presenter {
                             try {
                                 float newMultiplier = Float.parseFloat(multiplierString);
                                 multiplier.onMultiplierChange(newMultiplier);
-                            } catch (NumberFormatException ex) {}
+                            } catch (NumberFormatException ex) {
+                            }
                         })
         );
     }

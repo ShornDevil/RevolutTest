@@ -17,7 +17,6 @@ public class MainViewState extends ViewModel implements MainContract.View, MainC
 
     private MutableLiveData<Boolean> setLoadingStream;
     private MutableLiveData<CurrenciesAdapter> currenciesRatesAdapterStream;
-    private MutableLiveData<Pair<Integer, Float>> updateRatesStream;
 
     @Inject
     MainPresenter presenter;
@@ -25,7 +24,6 @@ public class MainViewState extends ViewModel implements MainContract.View, MainC
     public MainViewState() {
         setLoadingStream = new MutableLiveData<>();
         currenciesRatesAdapterStream = new MutableLiveData<>();
-        updateRatesStream = new MutableLiveData<>();
     }
 
     /**
@@ -37,7 +35,6 @@ public class MainViewState extends ViewModel implements MainContract.View, MainC
     public void attachView(LifecycleOwner lifecycleOwner, MainContract.View view) {
         setLoadingStream.observe(lifecycleOwner, view::setLoading);
         currenciesRatesAdapterStream.observe(lifecycleOwner, view::setRatesAdapter);
-        updateRatesStream.observe(lifecycleOwner, view::updateItemAtPosition);
     }
 
     /**
@@ -48,7 +45,6 @@ public class MainViewState extends ViewModel implements MainContract.View, MainC
     public void detachView(LifecycleOwner lifecycleOwner) {
         setLoadingStream.removeObservers(lifecycleOwner);
         currenciesRatesAdapterStream.removeObservers(lifecycleOwner);
-        updateRatesStream.removeObservers(lifecycleOwner);
     }
 
     /**
@@ -77,14 +73,6 @@ public class MainViewState extends ViewModel implements MainContract.View, MainC
     @Override
     public void setRatesAdapter(@NonNull CurrenciesAdapter adapter) {
         currenciesRatesAdapterStream.postValue(adapter);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void updateItemAtPosition(@NonNull Pair<Integer, Float> positionAndRate) {
-        updateRatesStream.postValue(positionAndRate);
     }
 
     /**
