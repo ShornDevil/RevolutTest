@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -85,13 +86,8 @@ public class MainPresenter implements MainContract.Presenter {
     public void viewCreated(@NonNull RecyclerView.LayoutManager layoutManager) {
         view.setRatesAdapter(adapter);
 
-        disposableContainer.add(Observable.create(
-                subscriber -> {
-                    while (true) {
-                        subscriber.onNext(reository.requestRates(Url.CURRENCIES_RATES_API, baseCurrency));
-                        Thread.sleep(1000);
-                    }
-                })
+        disposableContainer.add(Observable.interval(1000, TimeUnit.MILLISECONDS)
+                .map(hz -> reository.requestRates(Url.CURRENCIES_RATES_API, baseCurrency))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(ratesObject -> {
